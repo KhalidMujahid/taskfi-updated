@@ -1,13 +1,13 @@
 import React from "react";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { supabase } from "@/lib/supabase";
 import { Gig } from "@/types";
 import HireButton from "@/components/HireButton";
 
 const GigDetailPage: React.FC = () => {
-  const router = useRouter();
-  const { id } = router.query;
+  const params = useParams();
+  const id = params?.id;
   const { connected, publicKey } = useWallet();
   const [gig, setGig] = React.useState<Gig | null>(null);
   const [loading, setLoading] = React.useState(true);

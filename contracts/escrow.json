@@ -1,0 +1,70 @@
+{
+  "version": "0.1.0",
+  "name": "escrow",
+  "instructions": [
+    {
+      "name": "initialize",
+      "accounts": [
+        { "name": "escrow", "isMut": true, "isSigner": true },
+        { "name": "initializer", "isMut": true, "isSigner": true },
+        { "name": "escrowTokenAccount", "isMut": true, "isSigner": false },
+        { "name": "systemProgram", "isMut": false, "isSigner": false },
+        { "name": "tokenProgram", "isMut": false, "isSigner": false }
+      ],
+      "args": [{ "name": "amount", "type": "u64" }]
+    },
+    {
+      "name": "accept",
+      "accounts": [
+        { "name": "escrow", "isMut": true, "isSigner": false },
+        { "name": "escrowTokenAccount", "isMut": true, "isSigner": false },
+        { "name": "freelancerTokenAccount", "isMut": true, "isSigner": false },
+        { "name": "escrowSigner", "isMut": false, "isSigner": false },
+        { "name": "tokenProgram", "isMut": false, "isSigner": false }
+      ],
+      "args": []
+    },
+    {
+      "name": "refund",
+      "accounts": [
+        { "name": "escrow", "isMut": true, "isSigner": false },
+        { "name": "escrowTokenAccount", "isMut": true, "isSigner": false },
+        { "name": "initializerTokenAccount", "isMut": true, "isSigner": false },
+        { "name": "escrowSigner", "isMut": false, "isSigner": false },
+        { "name": "tokenProgram", "isMut": false, "isSigner": false }
+      ],
+      "args": []
+    }
+  ],
+  "accounts": [
+    {
+      "name": "Escrow",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          { "name": "initializer", "type": "publicKey" },
+          { "name": "initializerAmount", "type": "u64" },
+          { "name": "state", "type": { "defined": "EscrowState" } },
+          { "name": "bump", "type": "u8" }
+        ]
+      }
+    }
+  ],
+  "types": [
+    {
+      "name": "EscrowState",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          { "name": "Initialized" },
+          { "name": "Accepted" },
+          { "name": "Refunded" },
+          { "name": "Disputed" }
+        ]
+      }
+    }
+  ],
+  "errors": [
+    { "code": 6000, "name": "InvalidState", "msg": "Invalid escrow state" }
+  ]
+}
