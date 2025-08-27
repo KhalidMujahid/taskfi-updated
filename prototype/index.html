@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TaskFi</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/@solana/web3.js@1.70.0/lib/index.iife.min.js"></script>
+    <script src="https://unpkg.com/@solana/wallet-adapter-phantom@0.9.15/lib/index.iife.min.js"></script>
+    <style>
+      :root {
+        --primary: #7b3fe4;
+        --secondary: #2a2a2a;
+        --accent: #00eb9d;
+        --light: #f8f9fa;
+        --dark: #1a1a1a;
+        --success: #10b981;
+        --warning: #f59e0b;
+        --danger: #ef4444;
+        --gray: #6b7280;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+      body {
+        background-color: #0f0f1a;
+        color: var(--light);
+        line-height: 1.6;
+      }
+      .container {
+        width: 100%;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+      }
+      header {
+        background-color: var(--dark);
+        padding: 1rem 0;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      }
+      .header-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--accent);
+      }
+      .logo-icon {
+        color: var(--primary);
+      }
+      nav ul {
+        display: flex;
+        list-style: none;
+        gap: 2rem;
+      }
+      nav a {
+        color: var(--light);
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.3s;
+      }
+      nav a:hover {
+        color: var(--accent);
+      }
+      .wallet-connect {
+        background: linear-gradient(45deg, var(--primary), #9d4edd);
+        color: white;
+        border: none;
+        padding: 0.7rem 1.5rem;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .wallet-connect:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(123, 63, 228, 0.3);
+      }
+      .wallet-connected {
+        background-color: var(--success);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .hero {
+        padding: 4rem 0;
+        text-align: center;
+        background: linear-gradient(180deg, #0f0f1a 0%, #1a1a2a 100%);
+      }
+      .hero h1 {
+        font-size: 3.5rem;
+        margin-bottom: 1rem;
+        background: linear-gradient(45deg, var(--accent), var(--primary));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      .hero p {
+        font-size: 1.2rem;
+        max-width: 700px;
+        margin: 0 auto 2rem;
+        color: var(--gray);
+      }
+      .cta-button {
+        background: linear-gradient(45deg, var(--primary), #9d4edd);
+        color: white;
+        border: none;
+        padding: 1rem 2rem;
+        border-radius: 8px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+      }
+      .cta-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 20px rgba(123, 63, 228, 0.4);
+      }
+      section {
+        padding: 4rem 0;
+      }
+      .section-title {
+        text-align: center;
+        margin-bottom: 3rem;
+        font-size: 2.2rem;
+        color: var(--light);
+      }
+      .section-title span {
+        color: var(--accent);
+      }
+      .gigs-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 2rem;
+      }
+      .gig-card {
+        background-color: #1e1e2f;
+        border-radius: 12px;
+        overflow: hidden;
+        transition: transform 0.3s, box-shadow 0.3s;
+      }
+      .gig-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+      }
+      .gig-image {
+        height: 180px;
+        background: linear-gradient(45deg, #3a1c71, #d76d77, #ffaf7b);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .gig-content {
+        padding: 1.5rem;
+      }
+      .gig-title {
+        font-size: 1.3rem;
+        margin-bottom: 0.5rem;
+        color: var(--light);
+      }
+      .gig-description {
+        color: var(--gray);
+        margin-bottom: 1rem;
+        font-size: 0.95rem;
+      }
+      .gig-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 1.5rem;
+      }
+      .gig-price {
+        font-weight: 700;
+        color: var(--accent);
+        font-size: 1.2rem;
+      }
+      .btn-hire {
+        background-color: var(--primary);
+        color: white;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+      .btn-hire:hover {
+        background-color: #6a2fc9;
+      }
+      .how-it-works {
+        background-color: #1a1a2a;
+      }
+      .steps {
+        display: flex;
+        justify-content: space-between;
+        gap: 2rem;
+        max-width: 1000px;
+        margin: 0 auto;
+      }
+      .step {
+        text-align: center;
+        flex: 1;
+      }
+      .step-icon {
+        width: 80px;
+        height: 80px;
+        background: linear-gradient(45deg, var(--primary), #9d4edd);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.5rem;
+        font-size: 2rem;
+      }
+      .step-title {
+        font-size: 1.3rem;
+        margin-bottom: 1rem;
+        color: var(--light);
+      }
+      .step-description {
+        color: var(--gray);
+      }
+      .job-lifecycle {
+        text-align: center;
+      }
+      .lifecycle-visual {
+        max-width: 800px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: relative;
+        padding: 2rem 0;
+      }
+      .lifecycle-step {
+        width: 120px;
+        text-align: center;
+        position: relative;
+        z-index: 2;
+      }
+      .lifecycle-icon {
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(45deg, var(--primary), #9d4edd);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1rem;
+        font-size: 1.5rem;
+      }
+      .lifecycle-connector {
+        position: absolute;
+        top: 50%;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        background: linear-gradient(90deg, var(--primary), var(--accent));
+        z-index: 1;
+      }
+      footer {
+        background-color: var(--dark);
+        padding: 3rem 0;
+        text-align: center;
+      }
+      .footer-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      .footer-logo {
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        color: var(--accent);
+      }
+      .footer-links {
+        display: flex;
+        gap: 2rem;
+        margin-bottom: 2rem;
+      }
+      .footer-links a {
+        color: var(--light);
+        text-decoration: none;
+        transition: color 0.3s;
+      }
+      .footer-links a:hover {
+        color: var(--accent);
+      }
+      .copyright {
+        color: var(--gray);
+        font-size: 0.9rem;
+      }
+      .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.7);
+        z-index: 1000;
+        align-items: center;
+        justify-content: center;
+      }
+      .modal-content {
+        background-color: #1e1e2f;
+        border-radius: 12px;
+        width: 100%;
+        max-width: 500px;
+        padding: 2rem;
+        position: relative;
+      }
+      .close-modal {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        background: none;
+        border: none;
+        color: var(--light);
+        font-size: 1.5rem;
+        cursor: pointer;
+      }
+      .modal-title {
+        font-size: 1.5rem;
+        margin-bottom: 1.5rem;
+        color: var(--accent);
+      }
+      .form-group {
+        margin-bottom: 1.5rem;
+      }
+      .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+      }
+      .form-group input,
+      .form-group textarea,
+      .form-group select {
+        width: 100%;
+        padding: 0.8rem;
+        border: 1px solid #333;
+        border-radius: 6px;
+        background-color: #2a2a3f;
+        color: var(--light);
+      }
+      .form-group textarea {
+        min-height: 120px;
+        resize: vertical;
+      }
+      .submit-btn {
+        background: linear-gradient(45deg, var(--primary), #9d4edd);
+        color: white;
+        border: none;
+        padding: 0.8rem 2rem;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        width: 100%;
+        transition: all 0.3s;
+      }
+      .submit-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(123, 63, 228, 0.3);
+      }
+      @media (max-width: 768px) {
+        .steps {
+          flex-direction: column;
+          gap: 3rem;
+        }
+        .lifecycle-visual {
+          flex-direction: column;
+          gap: 2rem;
+        }
+        .lifecycle-connector {
+          width: 2px;
+          height: 100%;
+          top: 0;
+          left: 50%;
+        }
+        .hero h1 {
+          font-size: 2.5rem;
+        }
+        nav ul {
+          gap: 1rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="container header-content">
+        <div class="logo">
+          <i class="fas fa-code logo-icon"></i>
+          <span>TaskFi</span>
+        </div>
+        <nav>
+          <ul>
+            <li><a href="#">Home</a></li>
+            <li><a href="#">Gigs</a></li>
+            <li><a href="#">How It Works</a></li>
+            <li><a href="#">Jobs</a></li>
+          </ul>
+        </nav>
+        <button id="connectWallet" class="wallet-connect">
+          <i class="fas fa-wallet"></i>
+          Connect Wallet
+        </button>
+      </div>
+    </header>
+    <section class="hero">
+      <div class="container">
+        <h1>Freelance with Blockchain Security</h1>
+        <p>
+          Solance is a decentralized freelancing platform that uses Solana
+          blockchain and smart contracts to ensure secure payments through
+          escrow for both hirers and freelancers.
+        </p>
+        <button class="cta-button">Get Started</button>
+      </div>
+    </section>
+    <section class="featured-gigs">
+      <div class="container">
+        <h2 class="section-title">Featured <span>Gigs</span></h2>
+        <div class="gigs-grid">
+          <div class="gig-card">
+            <div class="gig-image">
+              <i
+                class="fas fa-paint-brush"
+                style="font-size: 3rem; color: white"
+              ></i>
+            </div>
+            <div class="gig-content">
+              <h3 class="gig-title">UI/UX Designer</h3>
+              <p class="gig-description">
+                I will design a modern and responsive UI for your web
+                application using Figma.
+              </p>
+              <div class="gig-footer">
+                <div class="gig-price">5 SOL</div>
+                <button class="btn-hire">Hire Now</button>
+              </div>
+            </div>
+          </div>
+          <div class="gig-card">
+            <div class="gig-image">
+              <i class="fas fa-code" style="font-size: 3rem; color: white"></i>
+            </div>
+            <div class="gig-content">
+              <h3 class="gig-title">Smart Contract Developer</h3>
+              <p class="gig-description">
+                I will develop and audit Solana smart contracts using Anchor
+                framework.
+              </p>
+              <div class="gig-footer">
+                <div class="gig-price">15 SOL</div>
+                <button class="btn-hire">Hire Now</button>
+              </div>
+            </div>
+          </div>
+          <div class="gig-card">
+            <div class="gig-image">
+              <i
+                class="fas fa-chart-line"
+                style="font-size: 3rem; color: white"
+              ></i>
+            </div>
+            <div class="gig-content">
+              <h3 class="gig-title">Marketing Specialist</h3>
+              <p class="gig-description">
+                I will create a comprehensive marketing strategy for your crypto
+                project.
+              </p>
+              <div class="gig-footer">
+                <div class="gig-price">8 SOL</div>
+                <button class="btn-hire">Hire Now</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="how-it-works">
+      <div class="container">
+        <h2 class="section-title">How It <span>Works</span></h2>
+        <div class="steps">
+          <div class="step">
+            <div class="step-icon">
+              <i class="fas fa-user-plus"></i>
+            </div>
+            <h3 class="step-title">Create Profile</h3>
+            <p class="step-description">
+              Sign up as a freelancer or hirer and connect your Solana wallet.
+            </p>
+          </div>
+          <div class="step">
+            <div class="step-icon">
+              <i class="fas fa-briefcase"></i>
+            </div>
+            <h3 class="step-title">Post or Browse Gigs</h3>
+            <p class="step-description">
+              Freelancers create gigs, hirers browse and select suitable
+              candidates.
+            </p>
+          </div>
+          <div class="step">
+            <div class="step-icon">
+              <i class="fas fa-lock"></i>
+            </div>
+            <h3 class="step-title">Funds in Escrow</h3>
+            <p class="step-description">
+              Hirer funds are locked in a secure Solana smart contract escrow.
+            </p>
+          </div>
+          <div class="step">
+            <div class="step-icon">
+              <i class="fas fa-check-circle"></i>
+            </div>
+            <h3 class="step-title">Completion & Release</h3>
+            <p class="step-description">
+              Once work is approved, funds are released to the freelancer.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="job-lifecycle">
+      <div class="container">
+        <h2 class="section-title">Job <span>Lifecycle</span></h2>
+        <div class="lifecycle-visual">
+          <div class="lifecycle-connector"></div>
+          <div class="lifecycle-step">
+            <div class="lifecycle-icon">
+              <i class="fas fa-handshake"></i>
+            </div>
+            <h4>Hired</h4>
+          </div>
+          <div class="lifecycle-step">
+            <div class="lifecycle-icon">
+              <i class="fas fa-lock"></i>
+            </div>
+            <h4>Escrow Locked</h4>
+          </div>
+          <div class="lifecycle-step">
+            <div class="lifecycle-icon">
+              <i class="fas fa-tasks"></i>
+            </div>
+            <h4>Work In Progress</h4>
+          </div>
+          <div class="lifecycle-step">
+            <div class="lifecycle-icon">
+              <i class="fas fa-check-double"></i>
+            </div>
+            <h4>Completed</h4>
+          </div>
+          <div class="lifecycle-step">
+            <div class="lifecycle-icon">
+              <i class="fas fa-money-bill-wave"></i>
+            </div>
+            <h4>Funds Released</h4>
+          </div>
+        </div>
+      </div>
+    </section>
+    <footer>
+      <div class="container footer-content">
+        <div class="footer-logo">Solance</div>
+        <div class="footer-links">
+          <a href="#">About</a>
+          <a href="#">Gigs</a>
+          <a href="#">How It Works</a>
+          <a href="#">Contact</a>
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms of Service</a>
+        </div>
+        <p class="copyright">© 2023 Solance. All rights reserved.</p>
+      </div>
+    </footer>
+    <div id="createGigModal" class="modal">
+      <div class="modal-content">
+        <button class="close-modal">&times;</button>
+        <h2 class="modal-title">Create New Gig</h2>
+        <form id="gigForm">
+          <div class="form-group">
+            <label for="gigTitle">Gig Title</label>
+            <input
+              type="text"
+              id="gigTitle"
+              placeholder="e.g., Senior Solana Developer"
+            />
+          </div>
+          <div class="form-group">
+            <label for="gigDescription">Description</label>
+            <textarea
+              id="gigDescription"
+              placeholder="Describe your service in detail..."
+            ></textarea>
+          </div>
+          <div class="form-group">
+            <label for="gigCategory">Category</label>
+            <select id="gigCategory">
+              <option value="development">Development</option>
+              <option value="design">Design</option>
+              <option value="marketing">Marketing</option>
+              <option value="writing">Writing</option>
+              <option value="consulting">Consulting</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="gigPrice">Price (SOL)</label>
+            <input type="number" id="gigPrice" placeholder="e.g., 5" />
+          </div>
+          <button type="submit" class="submit-btn">Create Gig</button>
+        </form>
+      </div>
+    </div>
+    <div id="hireModal" class="modal">
+      <div class="modal-content">
+        <button class="close-modal">&times;</button>
+        <h2 class="modal-title">Hire Freelancer</h2>
+        <form id="hireForm">
+          <div class="form-group">
+            <label for="jobDetails">Job Details</label>
+            <textarea
+              id="jobDetails"
+              placeholder="Describe the job requirements..."
+            ></textarea>
+          </div>
+          <div class="form-group">
+            <label for="escrowAmount">Escrow Amount (SOL)</label>
+            <input type="number" id="escrowAmount" placeholder="e.g., 5" />
+          </div>
+          <div class="form-group">
+            <label for="timeline">Timeline (days)</label>
+            <input type="number" id="timeline" placeholder="e.g., 7" />
+          </div>
+          <button type="submit" class="submit-btn">Fund Escrow & Hire</button>
+        </form>
+      </div>
+    </div>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const connectWalletBtn = document.getElementById("connectWallet");
+        const createGigModal = document.getElementById("createGigModal");
+        const hireModal = document.getElementById("hireModal");
+        const closeModalButtons = document.querySelectorAll(".close-modal");
+        const gigForm = document.getElementById("gigForm");
+        const hireForm = document.getElementById("hireForm");
+        connectWalletBtn.addEventListener("click", () => {
+          if (connectWalletBtn.classList.contains("wallet-connected")) {
+            connectWalletBtn.innerHTML =
+              '<i class="fas fa-wallet"></i> Connect Wallet';
+            connectWalletBtn.classList.remove("wallet-connected");
+            alert("Wallet disconnected");
+          } else {
+            connectWalletBtn.innerHTML =
+              '<i class="fas fa-check-circle"></i> Connected: 8Vdo...9Xz3';
+            connectWalletBtn.classList.add("wallet-connected");
+            alert("Wallet connected successfully!");
+            const createGigBtn = document.createElement("button");
+            createGigBtn.className = "wallet-connect";
+            createGigBtn.innerHTML = '<i class="fas fa-plus"></i> Create Gig';
+            createGigBtn.style.marginRight = "10px";
+            createGigBtn.addEventListener("click", () => {
+              createGigModal.style.display = "flex";
+            });
+            connectWalletBtn.parentNode.insertBefore(
+              createGigBtn,
+              connectWalletBtn
+            );
+          }
+        });
+        const hireButtons = document.querySelectorAll(".btn-hire");
+        hireButtons.forEach((button) => {
+          button.addEventListener("click", () => {
+            hireModal.style.display = "flex";
+          });
+        });
+        closeModalButtons.forEach((button) => {
+          button.addEventListener("click", () => {
+            createGigModal.style.display = "none";
+            hireModal.style.display = "none";
+          });
+        });
+        window.addEventListener("click", (event) => {
+          if (event.target === createGigModal) {
+            createGigModal.style.display = "none";
+          }
+          if (event.target === hireModal) {
+            hireModal.style.display = "none";
+          }
+        });
+        gigForm.addEventListener("submit", (e) => {
+          e.preventDefault();
+          alert("Gig created successfully!");
+          createGigModal.style.display = "none";
+        });
+        hireForm.addEventListener("submit", (e) => {
+          e.preventDefault();
+          const amount = document.getElementById("escrowAmount").value;
+          alert(
+            `Escrow funded with ${amount} SOL! Funds are now locked in a secure smart contract.`
+          );
+          hireModal.style.display = "none";
+        });
+        const simulateWalletConnection = () => {
+          if (typeof window.solana === "undefined") {
+            window.solana = {
+              isPhantom: true,
+              isConnected: false,
+              publicKey: {
+                toString: () => "8VdoV9Xz3J2S5Kp1q7RwE6TgLmNb8Yc2A",
+              },
+              connect: () => Promise.resolve(),
+              disconnect: () => Promise.resolve(),
+              on: (event, callback) => {
+                if (event === "connect") {
+                  setTimeout(
+                    () =>
+                      callback({
+                        publicKey: "8VdoV9Xz3J2S5Kp1q7RwE6TgLmNb8Yc2A",
+                      }),
+                    1000
+                  );
+                }
+              },
+            };
+          }
+        };
+        simulateWalletConnection();
+      });
+    </script>
+  </body>
+</html>
