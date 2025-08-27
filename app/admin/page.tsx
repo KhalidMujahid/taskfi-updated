@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { supabase } from "@/lib/supabase";
@@ -44,15 +46,12 @@ const AdminPage: React.FC = () => {
     decision: "release" | "refund"
   ) => {
     try {
-      // Update job status
       const { error } = await supabase
         .from("jobs")
         .update({ status: decision === "release" ? "completed" : "cancelled" })
         .eq("id", jobId);
 
       if (error) throw error;
-
-      // Anchor program go follow here
 
       alert(
         `Dispute resolved: ${

@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import { useParams } from "next/navigation";
 import { useWallet } from "@solana/wallet-adapter-react";
