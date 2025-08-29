@@ -58,7 +58,6 @@ const GigsPage: React.FC = () => {
           escrow.
         </p>
 
-        {/* Search Bar */}
         <div className="flex justify-center mb-10">
           <input
             type="text"
@@ -69,7 +68,6 @@ const GigsPage: React.FC = () => {
           />
         </div>
 
-        {/* Loading */}
         {loading && (
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {Array.from({ length: 6 }).map((_, i) => (
@@ -89,7 +87,6 @@ const GigsPage: React.FC = () => {
           </div>
         )}
 
-        {/* Gigs Grid */}
         {!loading && filteredGigs.length > 0 && (
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
             {filteredGigs.map((gig) => (

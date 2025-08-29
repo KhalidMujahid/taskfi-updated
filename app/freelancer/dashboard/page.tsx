@@ -3,8 +3,8 @@
 import React from "react";
 import Link from "next/link";
 import { useWallet } from "@solana/wallet-adapter-react";
-import { supabase } from "../../../lib/supabase";
-import { Gig, Job } from "../../../types";
+import { supabase } from "@/lib/supabase";
+import { Gig, Job } from "@/types";
 
 const FreelancerDashboard: React.FC = () => {
   const { publicKey } = useWallet();
@@ -36,8 +36,6 @@ const FreelancerDashboard: React.FC = () => {
     fetchData();
   }, [publicKey]);
 
-  if (loading) return <div>Loading dashboard...</div>;
-
   async function handleAcceptJob(id: string): Promise<void> {
     setLoading(true);
     const { error } = await supabase
@@ -56,45 +54,112 @@ const FreelancerDashboard: React.FC = () => {
     setLoading(false);
   }
 
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-900 text-white">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-indigo-400 border-opacity-70"></div>
+        <span className="ml-4">Loading your dashboard...</span>
+      </div>
+    );
+  }
+
   return (
-    <div className="freelancer-dashboard">
-      <h1>Freelancer Dashboard</h1>
+    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-white px-6 py-12">
+      <h1 className="text-4xl font-extrabold mb-10 text-center">
+        Freelancer <span className="text-indigo-400">Dashboard</span>
+      </h1>
 
-      <div className="dashboard-section">
-        <h2>My Gigs</h2>
-        <Link href="/freelancer/create-gig" className="create-gig-button">
-          Create New Gig
-        </Link>
-
-        <div className="gigs-list">
-          {gigs.map((gig) => (
-            <div key={gig.id} className="gig-item">
-              <h3>{gig.title}</h3>
-              <p>{gig.description}</p>
-              <div className="gig-price">{gig.price} SOL</div>
-              <div className="gig-status">{gig.status}</div>
-            </div>
-          ))}
+      {/* Gigs Section */}
+      <div className="mb-12">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-2xl font-bold">My Gigs</h2>
+          <Link
+            href="/freelancer/create-gig"
+            className="px-4 py-2 rounded-lg bg-indigo-500 hover:bg-indigo-600 transition shadow font-semibold"
+          >
+            Create New Gig
+          </Link>
         </div>
+
+        {gigs.length === 0 ? (
+          <p className="text-gray-400">You haven’t created any gigs yet.</p>
+        ) : (
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {gigs.map((gig) => (
+              <div
+                key={gig.id}
+                className="bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-700 hover:shadow-xl transition"
+              >
+                <h3 className="text-xl font-bold mb-2">{gig.title}</h3>
+                <p className="text-gray-300 mb-4 line-clamp-3">
+                  {gig.description}
+                </p>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="font-semibold text-indigo-400">
+                    {gig.price} SOL
+                  </span>
+                  <span
+                    className={`px-3 py-1 rounded-full text-xs ${
+                      gig.status === "active"
+                        ? "bg-green-600/30 text-green-400"
+                        : "bg-yellow-600/30 text-yellow-300"
+                    }`}
+                  >
+                    {gig.status}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
-      <div className="dashboard-section">
-        <h2>My Jobs</h2>
+      <div>
+        <h2 className="text-2xl font-bold mb-6">My Jobs</h2>
 
-        <div className="jobs-list">
-          {jobs.map((job) => (
-            <div key={job.id} className="job-item">
-              <h3>Job #{job.id.slice(0, 8)}</h3>
-              <div className="job-price">{job.price} SOL</div>
-              <div className="job-status">{job.status}</div>
-              {job.status === "pending" && (
-                <button onClick={() => handleAcceptJob(job.id)}>
-                  Accept Job
-                </button>
-              )}
-            </div>
-          ))}
-        </div>
+        {jobs.length === 0 ? (
+          <p className="text-gray-400">No jobs assigned yet.</p>
+        ) : (
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {jobs.map((job) => (
+              <div
+                key={job.id}
+                className="bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-700 hover:shadow-xl transition"
+              >
+                <h3 className="text-lg font-bold mb-3">
+                  Job #{job.id.slice(0, 8)}
+                </h3>
+                <p className="mb-2 text-sm text-gray-400">
+                  Price:{" "}
+                  <span className="text-indigo-400 font-semibold">
+                    {job.price} SOL
+                  </span>
+                </p>
+                <p className="mb-4 text-sm">
+                  Status:{" "}
+                  <span
+                    className={`px-3 py-1 rounded-full text-xs ${
+                      job.status === "accepted"
+                        ? "bg-green-600/30 text-green-400"
+                        : "bg-yellow-600/30 text-yellow-300"
+                    }`}
+                  >
+                    {job.status}
+                  </span>
+                </p>
+
+                {job.status === "pending" && (
+                  <button
+                    onClick={() => handleAcceptJob(job.id)}
+                    className="w-full px-4 py-2 rounded-lg bg-green-500 hover:bg-green-600 transition shadow font-semibold"
+                  >
+                    Accept Job
+                  </button>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
