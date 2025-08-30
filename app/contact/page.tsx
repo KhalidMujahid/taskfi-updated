@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { Globe } from "lucide-react";
 
 const ContactPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
@@ -28,7 +29,7 @@ const ContactPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-white">
       <section className="px-6 py-16 text-center max-w-3xl mx-auto">
-        <h1 className="text-4xl md:text-6xl font-extrabold mb-4">Contact Us</h1>
+        <h1 className="text-4xl md:text-6xl font-extrabold mb-4 mt-10">Contact Us</h1>
         <p className="text-lg text-gray-300">
           Have questions, feedback, or partnership ideas? We’d love to hear from
           you!
@@ -90,7 +91,7 @@ const ContactPage: React.FC = () => {
           <h2 className="text-2xl font-bold mb-6">📍 Get in Touch</h2>
           <ul className="space-y-4 text-gray-300">
             <li>
-              <span className="font-semibold">Email:</span>{" "}
+              <span className="-semibold">Email:</span>{" "}
               <a
                 href="mailto:support@taskfi.io"
                 className="text-indigo-400 hover:underline"
@@ -100,19 +101,19 @@ const ContactPage: React.FC = () => {
             </li>
             <li>
               <span className="font-semibold">Location:</span> Remote •
-              Worldwide 🌍
+              Worldwide <Globe className="inline-block w-5 h-5 ml-1" strokeWidth={1.5} />
             </li>
             <li>
               <span className="font-semibold">Socials:</span>
               <div className="flex gap-4 mt-2">
                 <a href="#" target="_blank" className="hover:text-indigo-400">
-                  🐦 Twitter
+                  X
                 </a>
                 <a href="#" target="_blank" className="hover:text-indigo-400">
-                  💼 LinkedIn
+                  LinkedIn
                 </a>
                 <a href="#" target="_blank" className="hover:text-indigo-400">
-                  📢 Discord
+                  Discord
                 </a>
               </div>
             </li>

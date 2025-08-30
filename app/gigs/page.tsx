@@ -50,7 +50,7 @@ const GigsPage: React.FC = () => {
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-white px-6 py-12">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
-        <h1 className="text-4xl font-extrabold mb-6 text-center">
+        <h1 className="text-4xl font-extrabold mb-6 text-center mt-20">
           Browse <span className="text-indigo-400">Available Gigs</span>
         </h1>
         <p className="text-center text-gray-400 mb-10">
