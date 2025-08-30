@@ -6,6 +6,7 @@ import { useWallet } from "@solana/wallet-adapter-react";
 import { supabase } from "@/lib/supabase";
 import WalletConnect from "@/components/WalletConnect";
 import { Menu, X } from "lucide-react";
+import { motion } from "framer-motion";
 
 const Navbar: React.FC = () => {
   const { publicKey, connected } = useWallet();
@@ -38,10 +39,15 @@ const Navbar: React.FC = () => {
   ];
 
   return (
-    <nav className="sticky top-0 z-50 w-full bg-gray-900/80 backdrop-blur-md border-b border-gray-800">
+    <motion.nav
+      initial={{ y: -100 }}
+      animate={{ y: 0 }}
+      transition={{ type: "spring", stiffness: 120, damping: 20 }}
+      className="sticky top-0 z-50 w-full bg-transparent backdrop-blur-md border-b"
+    >
       <div className="max-w-7xl mx-auto flex items-center justify-between px-6 py-4">
         {/* Logo */}
-        <Link href="/" className="text-2xl font-extrabold text-indigo-400 tracking-wide">
+        <Link href="/" className="text-3xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-blue-500">
           TaskFi
         </Link>
 
@@ -51,11 +57,30 @@ const Navbar: React.FC = () => {
             <Link
               key={idx}
               href={link.href}
-              className="text-gray-300 hover:text-indigo-400 transition font-medium"
+              className="text-gray-300 hover:text-green-400 transition-colors duration-300 font-medium relative group"
             >
               {link.name}
+              <span className="absolute left-0 bottom-0 w-full h-0.5 bg-green-400 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
             </Link>
           ))}
+          {connected && userRole === "freelancer" && (
+            <Link
+              href="/freelancer/dashboard"
+              className="text-gray-300 hover:text-purple-400 transition-colors duration-300 font-medium relative group"
+            >
+              Freelancer Dashboard
+              <span className="absolute left-0 bottom-0 w-full h-0.5 bg-purple-400 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
+            </Link>
+          )}
+          {connected && userRole === "hirer" && (
+            <Link
+              href="/hirer/jobs"
+              className="text-gray-300 hover:text-indigo-400 transition-colors duration-300 font-medium relative group"
+            >
+              Hirer Jobs
+              <span className="absolute left-0 bottom-0 w-full h-0.5 bg-indigo-400 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
+            </Link>
+          )}
         </div>
 
         {/* Wallet Button */}
@@ -65,32 +90,56 @@ const Navbar: React.FC = () => {
 
         {/* Mobile Menu Button */}
         <button
-          className="md:hidden text-gray-300 hover:text-indigo-400 transition"
+          className="md:hidden text-gray-300 hover:text-green-400 transition-colors duration-300"
           onClick={() => setMenuOpen(!menuOpen)}
         >
-          {menuOpen ? <X size={26} /> : <Menu size={26} />}
+          {menuOpen ? <X size={28} /> : <Menu size={28} />}
         </button>
       </div>
 
       {/* Mobile Dropdown */}
       {menuOpen && (
-        <div className="md:hidden bg-gray-900 border-t border-gray-800 px-6 py-4 space-y-4">
+        <motion.div
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: "auto" }}
+          exit={{ opacity: 0, height: 0 }}
+          transition={{ duration: 0.3 }}
+          className="md:hidden bg-gray-900/90 border-t border-gray-800 px-6 py-4 space-y-4"
+        >
           {navLinks.map((link, idx) => (
             <Link
               key={idx}
               href={link.href}
-              className="block text-gray-300 hover:text-indigo-400 transition font-medium"
+              className="block text-gray-300 hover:text-green-400 transition-colors duration-300 font-medium py-2"
               onClick={() => setMenuOpen(false)}
             >
               {link.name}
             </Link>
           ))}
+          {connected && userRole === "freelancer" && (
+            <Link
+              href="/freelancer/dashboard"
+              className="block text-gray-300 hover:text-purple-400 transition-colors duration-300 font-medium py-2"
+              onClick={() => setMenuOpen(false)}
+            >
+              Freelancer Dashboard
+            </Link>
+          )}
+          {connected && userRole === "hirer" && (
+            <Link
+              href="/hirer/jobs"
+              className="block text-gray-300 hover:text-indigo-400 transition-colors duration-300 font-medium py-2"
+              onClick={() => setMenuOpen(false)}
+            >
+              Hirer Jobs
+            </Link>
+          )}
           <div className="pt-4 border-t border-gray-700">
             <WalletConnect />
           </div>
-        </div>
+        </motion.div>
       )}
-    </nav>
+    </motion.nav>
   );
 };
 

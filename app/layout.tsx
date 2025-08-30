@@ -1,8 +1,11 @@
-import SolanaProviders from "@/components/SolanaProviders";
+"use client";
+
 import Navbar from "@/components/Navbar";
+import SolanaProviders from "@/components/SolanaProviders";
 import "@/styles/global.css";
 
 import "@solana/wallet-adapter-react-ui/styles.css";
+import React from "react";
 
 export default function RootLayout({
   children,
